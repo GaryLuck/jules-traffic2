@@ -99,6 +99,7 @@
             border-top: 4px solid #7f8c8d;
             border-bottom: 4px solid #7f8c8d;
             box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            cursor: pointer;
         }
 
         .info {
@@ -211,6 +212,21 @@
         });
 
         resetBtn.addEventListener('click', initSimulation);
+
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            // Calculate the click position relative to the canvas
+            const x = e.clientX - rect.left;
+
+            // Determine which cell was clicked based on CELL_WIDTH
+            const cellIndex = Math.floor(x / CELL_WIDTH);
+
+            // If the cell is within bounds and empty, add a car and redraw
+            if (cellIndex >= 0 && cellIndex < NUM_CELLS && road[cellIndex] === null) {
+                road[cellIndex] = new Car(initSpeed);
+                draw();
+            }
+        });
 
         class Car {
             constructor(v) {
