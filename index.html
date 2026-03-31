@@ -99,6 +99,7 @@
             border-top: 4px solid #7f8c8d;
             border-bottom: 4px solid #7f8c8d;
             box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            cursor: pointer;
         }
 
         .info {
@@ -118,32 +119,32 @@
             <div class="control-group">
                 <label for="entryRate">Entry Rate (Cars/tick)</label>
                 <input type="range" id="entryRate" min="0" max="1" step="0.05" value="0.3">
-                <span id="entryRateVal" class="value-display">0.3</span>
+                <output id="entryRateVal" for="entryRate" class="value-display">0.3</output>
             </div>
 
             <div class="control-group">
                 <label for="initialSpeed">Initial Speed of Arriving Cars</label>
                 <input type="range" id="initialSpeed" min="0" max="5" step="1" value="3">
-                <span id="initialSpeedVal" class="value-display">3</span>
+                <output id="initialSpeedVal" for="initialSpeed" class="value-display">3</output>
             </div>
 
             <div class="control-group">
                 <label for="pBrake">Random Braking Prob (p)</label>
                 <input type="range" id="pBrake" min="0" max="1" step="0.05" value="0.10">
-                <span id="pBrakeVal" class="value-display">0.10</span>
+                <output id="pBrakeVal" for="pBrake" class="value-display">0.10</output>
             </div>
 
             <div class="control-group">
                 <label for="simSpeed">Simulation Speed</label>
                 <input type="range" id="simSpeed" min="50" max="1000" step="50" value="200">
-                <span id="simSpeedVal" class="value-display">200 ms</span>
+                <output id="simSpeedVal" for="simSpeed" class="value-display">200 ms</output>
             </div>
 
             <button id="resetBtn">Restart & Create Jam</button>
         </div>
 
         <div class="canvas-container">
-            <canvas id="roadCanvas" width="900" height="100"></canvas>
+            <canvas id="roadCanvas" width="900" height="100" role="img" aria-label="Live traffic simulation showing cars moving left to right"></canvas>
         </div>
 
         <div class="info">
@@ -211,6 +212,21 @@
         });
 
         resetBtn.addEventListener('click', initSimulation);
+
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            // Calculate the click position relative to the canvas
+            const x = e.clientX - rect.left;
+
+            // Determine which cell was clicked based on CELL_WIDTH
+            const cellIndex = Math.floor(x / CELL_WIDTH);
+
+            // If the cell is within bounds and empty, add a car and redraw
+            if (cellIndex >= 0 && cellIndex < NUM_CELLS && road[cellIndex] === null) {
+                road[cellIndex] = new Car(initSpeed);
+                draw();
+            }
+        });
 
         class Car {
             constructor(v) {
