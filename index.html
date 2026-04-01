@@ -100,6 +100,14 @@
             border-bottom: 4px solid #7f8c8d;
             box-shadow: 0 5px 15px rgba(0,0,0,0.5);
             cursor: pointer;
+            outline: none;
+        }
+
+        button:focus-visible,
+        input[type="range"]:focus-visible,
+        canvas:focus-visible {
+            outline: 2px solid #f1c40f;
+            outline-offset: 2px;
         }
 
         .info {
@@ -144,7 +152,10 @@
         </div>
 
         <div class="canvas-container">
-            <canvas id="roadCanvas" width="900" height="100" role="img" aria-label="Live traffic simulation showing cars moving left to right"></canvas>
+            <canvas id="roadCanvas" width="900" height="100" tabindex="0" role="img" aria-label="Live traffic simulation showing cars moving left to right"></canvas>
+            <p style="position: absolute; bottom: 0px; margin: 0; padding-bottom: 5px; font-size: 12px; color: #bdc3c7; width: 100%; text-align: center;">
+                💡 Tip: Click or press Space on the road to manually add a car
+            </p>
         </div>
 
         <div class="info">
@@ -225,6 +236,18 @@
             if (cellIndex >= 0 && cellIndex < NUM_CELLS && road[cellIndex] === null) {
                 road[cellIndex] = new Car(initSpeed);
                 draw();
+            }
+        });
+
+        canvas.addEventListener('keydown', (e) => {
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault(); // Prevent scrolling on Space
+                // Add car to the middle of the road as default for keyboard users
+                const cellIndex = Math.floor(NUM_CELLS / 2);
+                if (road[cellIndex] === null) {
+                    road[cellIndex] = new Car(initSpeed);
+                    draw();
+                }
             }
         });
 
