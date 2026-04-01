@@ -1,3 +1,7 @@
 ## 2024-05-24 - Semantic Range Input Outputs
 **Learning:** For custom slider displays where the current value of an `<input type="range">` is shown visually in text next to it, using a plain `<span>` element means screen readers won't automatically associate the displayed value with the input.
 **Action:** Use an `<output>` element instead of a `<span>` and add a `for="inputId"` attribute. This binds the displayed value properly to the input, ensuring screen readers can politely announce changes. Also ensure that `<canvas>` elements have `role="img"` and `aria-label="..."` attributes so they aren't ignored or read out awkwardly by screen readers.
+
+## 2024-05-25 - Custom Interactive Elements Need Keyboard Support and Visual Cues
+**Learning:** Custom interactive elements (like a clickable `<canvas>`) are functionally invisible to users if there is no visual cue (affordance) that they can be interacted with. Furthermore, even if discovered, they are completely inaccessible to keyboard users if they only respond to pointer events.
+**Action:** When adding interactivity to non-standard elements like `<canvas>`, always add a clear visual hint (e.g., helper text) for sighted users. For accessibility, make the element focusable (`tabindex="0"`), ensure it has a visible focus state (`:focus-visible`), and map equivalent keyboard events (like `keydown` for Space/Enter) to trigger the same actions as pointer events.
