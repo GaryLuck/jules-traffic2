@@ -83,6 +83,20 @@
             background-color: #c0392b;
         }
 
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button:focus-visible,
+        input[type="range"]:focus-visible {
+            outline: 3px solid #f1c40f;
+            outline-offset: 2px;
+        }
+
+        input[type="range"] {
+            cursor: pointer;
+        }
+
         .canvas-container {
             width: 100%;
             overflow-x: auto;
@@ -141,10 +155,11 @@
             </div>
 
             <button id="resetBtn">Restart & Create Jam</button>
+            <button id="addCarBtn" aria-label="Add a car at the first empty space">Add Car</button>
         </div>
 
         <div class="canvas-container">
-            <canvas id="roadCanvas" width="900" height="100" role="img" aria-label="Live traffic simulation showing cars moving left to right"></canvas>
+            <canvas id="roadCanvas" width="900" height="100" role="img" aria-label="Live traffic simulation showing cars moving left to right" title="Click on the road to add a car at a specific position"></canvas>
         </div>
 
         <div class="info">
@@ -180,6 +195,7 @@
         const simSpeedInput = document.getElementById('simSpeed');
         const simSpeedVal = document.getElementById('simSpeedVal');
         const resetBtn = document.getElementById('resetBtn');
+        const addCarBtn = document.getElementById('addCarBtn');
 
         // State
         let road = new Array(NUM_CELLS).fill(null);
@@ -212,6 +228,14 @@
         });
 
         resetBtn.addEventListener('click', initSimulation);
+
+        addCarBtn.addEventListener('click', () => {
+            const firstEmptyCell = road.indexOf(null);
+            if (firstEmptyCell !== -1) {
+                road[firstEmptyCell] = new Car(initSpeed);
+                draw();
+            }
+        });
 
         canvas.addEventListener('click', (e) => {
             const rect = canvas.getBoundingClientRect();
