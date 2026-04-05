@@ -158,7 +158,7 @@
             <p><strong>Cellular Automata Traffic Model (Nagel-Schreckenberg)</strong></p>
             <p>Cells are empty or occupied by a car. Cars move left to right.</p>
             <p>Rules per tick: 1. Accelerate to max speed (5). 2. Slow down to avoid crashing. 3. Randomly brake. 4. Move forward.</p>
-            <p>💡 <em>Tip: Click or press Enter/Space while focused on the road to manually add a car.</em></p>
+            <p>💡 <em>Tip: Click anywhere on the road to manually add a car.</em></p>
         </div>
     </div>
 
