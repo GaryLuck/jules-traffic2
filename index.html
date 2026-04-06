@@ -83,6 +83,13 @@
             background-color: #c0392b;
         }
 
+        button:focus-visible,
+        input[type="range"]:focus-visible,
+        canvas:focus-visible {
+            outline: 3px solid #f1c40f;
+            outline-offset: 2px;
+        }
+
         .canvas-container {
             width: 100%;
             overflow-x: auto;
@@ -144,13 +151,14 @@
         </div>
 
         <div class="canvas-container">
-            <canvas id="roadCanvas" width="900" height="100" role="img" aria-label="Live traffic simulation showing cars moving left to right"></canvas>
+            <canvas id="roadCanvas" width="900" height="100" tabindex="0" role="img" aria-label="Live traffic simulation showing cars moving left to right. Press Enter or Space to add a car."></canvas>
         </div>
 
         <div class="info">
             <p><strong>Cellular Automata Traffic Model (Nagel-Schreckenberg)</strong></p>
             <p>Cells are empty or occupied by a car. Cars move left to right.</p>
             <p>Rules per tick: 1. Accelerate to max speed (5). 2. Slow down to avoid crashing. 3. Randomly brake. 4. Move forward.</p>
+            <p>💡 <strong>Tip:</strong> Click on the road (or press Enter when focused) to manually add a car.</p>
         </div>
     </div>
 
@@ -225,6 +233,28 @@
             if (cellIndex >= 0 && cellIndex < NUM_CELLS && road[cellIndex] === null) {
                 road[cellIndex] = new Car(initSpeed);
                 draw();
+            }
+        });
+
+        canvas.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault(); // Prevent page scrolling for Space
+
+                // Find empty cells
+                const emptyCells = [];
+                for (let i = 0; i < NUM_CELLS; i++) {
+                    if (road[i] === null) {
+                        emptyCells.push(i);
+                    }
+                }
+
+                // Add a car to a random empty cell
+                if (emptyCells.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * emptyCells.length);
+                    const cellIndex = emptyCells[randomIndex];
+                    road[cellIndex] = new Car(initSpeed);
+                    draw();
+                }
             }
         });
 
