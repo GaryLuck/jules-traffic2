@@ -83,6 +83,13 @@
             background-color: #c0392b;
         }
 
+        button:focus-visible,
+        input[type="range"]:focus-visible,
+        canvas:focus-visible {
+            outline: 3px solid #f1c40f;
+            outline-offset: 2px;
+        }
+
         .canvas-container {
             width: 100%;
             overflow-x: auto;
@@ -100,6 +107,15 @@
             border-bottom: 4px solid #7f8c8d;
             box-shadow: 0 5px 15px rgba(0,0,0,0.5);
             cursor: pointer;
+        }
+
+        .tip {
+            font-size: 13px;
+            color: #1abc9c;
+            text-align: center;
+            margin-top: 8px;
+            margin-bottom: 0;
+            font-style: italic;
         }
 
         .info {
@@ -144,8 +160,9 @@
         </div>
 
         <div class="canvas-container">
-            <canvas id="roadCanvas" width="900" height="100" role="img" aria-label="Live traffic simulation showing cars moving left to right"></canvas>
+            <canvas id="roadCanvas" width="900" height="100" role="button" tabindex="0" aria-label="Live traffic simulation. Click or press enter on empty road space to manually add a car."></canvas>
         </div>
+        <p class="tip">💡 Click anywhere on the empty road to manually add a car!</p>
 
         <div class="info">
             <p><strong>Cellular Automata Traffic Model (Nagel-Schreckenberg)</strong></p>
@@ -213,7 +230,7 @@
 
         resetBtn.addEventListener('click', initSimulation);
 
-        canvas.addEventListener('click', (e) => {
+        function addCarAtEvent(e) {
             const rect = canvas.getBoundingClientRect();
             // Calculate the click position relative to the canvas
             const x = e.clientX - rect.left;
@@ -225,6 +242,19 @@
             if (cellIndex >= 0 && cellIndex < NUM_CELLS && road[cellIndex] === null) {
                 road[cellIndex] = new Car(initSpeed);
                 draw();
+            }
+        }
+
+        canvas.addEventListener('click', addCarAtEvent);
+        canvas.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                // Keyboard users can add cars to the middle cell as a fallback interaction
+                const midCell = Math.floor(NUM_CELLS / 2);
+                if (road[midCell] === null) {
+                    road[midCell] = new Car(initSpeed);
+                    draw();
+                }
             }
         });
 
