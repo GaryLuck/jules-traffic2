@@ -1,3 +1,7 @@
 ## 2024-05-24 - Semantic Range Input Outputs
 **Learning:** For custom slider displays where the current value of an `<input type="range">` is shown visually in text next to it, using a plain `<span>` element means screen readers won't automatically associate the displayed value with the input.
 **Action:** Use an `<output>` element instead of a `<span>` and add a `for="inputId"` attribute. This binds the displayed value properly to the input, ensuring screen readers can politely announce changes. Also ensure that `<canvas>` elements have `role="img"` and `aria-label="..."` attributes so they aren't ignored or read out awkwardly by screen readers.
+
+## 2026-04-07 - Uncover Hidden Canvas Interactions
+**Learning:** The Traffic Simulator has a "mystery meat" navigation issue where the primary simulation visualization (the canvas) is interactive—allowing users to add cars via click—but provides zero visual affordance or context to the user. This severely hurts discoverability and accessibility.
+**Action:** When working with interactive `<canvas>` elements or custom components, always surface hidden interactions via helper text (`<p class="tip">`) and ensure the element itself supports keyboard navigation (`tabindex="0"` with `keydown` event listeners) and has an appropriate ARIA role/label (`role="button"` and `aria-label`).
