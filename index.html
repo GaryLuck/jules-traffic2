@@ -159,8 +159,8 @@
         </div>
 
         <div class="canvas-container">
-            <canvas id="roadCanvas" width="900" height="100" role="img" aria-label="Live traffic simulation showing cars moving left to right. Click on an empty space on the road to manually add a car." tabindex="0"></canvas>
-            <div class="canvas-hint">💡 Click anywhere on the road to add a car</div>
+            <canvas id="roadCanvas" width="900" height="100" role="img" aria-label="Live traffic simulation showing cars moving left to right. Use Left/Right arrow keys to select a cell and press Enter/Space to manually add a car." tabindex="0"></canvas>
+            <div class="canvas-hint">💡 Use Left/Right arrow keys and Enter/Space to add a car</div>
         </div>
 
         <div class="info">
@@ -204,6 +204,7 @@
         let entryRate = parseFloat(entryRateInput.value);
         let initSpeed = parseInt(initialSpeedInput.value);
         let tickDelay = parseInt(simSpeedInput.value);
+        let selectedCell = -1;
 
         // Update display values
         entryRateInput.addEventListener('input', (e) => {
@@ -248,11 +249,25 @@
         });
 
         canvas.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
+            if (e.key === 'ArrowLeft') {
                 e.preventDefault();
-                // For keyboard interaction, add car to the middle if empty
-                handleCanvasInteraction(canvas.width / 2);
+                selectedCell = selectedCell <= 0 ? NUM_CELLS - 1 : selectedCell - 1;
+                draw();
+            } else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                selectedCell = selectedCell === NUM_CELLS - 1 || selectedCell === -1 ? 0 : selectedCell + 1;
+                draw();
+            } else if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                // For keyboard interaction, add car to the selected cell, or middle if none selected
+                const cellIndex = selectedCell === -1 ? Math.floor(NUM_CELLS / 2) : selectedCell;
+                handleCanvasInteraction(cellIndex * CELL_WIDTH);
             }
+        });
+
+        canvas.addEventListener('blur', () => {
+            selectedCell = -1;
+            draw();
         });
 
         class Car {
@@ -389,7 +404,7 @@
                 const y = ROAD_PADDING;
 
                 // Draw cell background (empty rectangle)
-                ctx.fillStyle = '#7f8c8d'; // Slightly darker grey for empty cells
+                ctx.fillStyle = i === selectedCell ? '#f1c40f' : '#7f8c8d'; // Slightly darker grey for empty cells, yellow for selected
                 // Leave a small gap (2px) between cells so they don't touch visually
                 ctx.fillRect(x + 1, y, CELL_WIDTH - 2, CELL_HEIGHT);
 
