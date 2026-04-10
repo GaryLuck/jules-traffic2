@@ -4,3 +4,6 @@
 ## 2024-05-25 - Hidden Interactions and Focus States
 **Learning:** Hidden interactions (like clicking a canvas to add an item) are inaccessible to users who don't know they exist, and custom inputs/buttons lacking `:focus-visible` states are difficult for keyboard navigators to use.
 **Action:** Always provide explicit visual affordances (helper text) for hidden click events, update `aria-label` to include instructions for screen readers, and ensure all interactive elements, including `<canvas>` elements if they are interactive, have clear `:focus-visible` styling and a `tabindex`.
+## 2026-04-10 - Canvas Keyboard Accessibility
+**Learning:** While simple `<canvas>` interaction (like clicking) is easily achievable, achieving functional parity for keyboard-only or screen reader users requires dedicated state management to track focus inside the canvas and dedicated key listeners (e.g., arrow keys) to navigate internal elements.
+**Action:** When a canvas is interactive, always check if keyboard interactions (like Enter/Space) achieve the same fine-grained control as mouse clicks. If not, implement internal focus tracking (e.g., `selectedCell`), handle arrow keys for navigation, provide clear visual feedback for the selected area, and explicitly update `aria-label` instructions to guide users on how to use these controls.
