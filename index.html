@@ -124,6 +124,18 @@
             color: #bdc3c7;
             text-align: center;
         }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
     </style>
 </head>
 <body>
@@ -158,6 +170,7 @@
             <button id="resetBtn">Restart & Create Jam</button>
         </div>
 
+        <div id="announcer" aria-live="polite" class="sr-only"></div>
         <div class="canvas-container">
             <canvas id="roadCanvas" width="900" height="100" role="img" aria-label="Live traffic simulation showing cars moving left to right. Use Left/Right arrow keys to select a cell and press Enter/Space to manually add a car." tabindex="0"></canvas>
             <div class="canvas-hint">💡 Use Left/Right arrow keys and Enter/Space to add a car</div>
@@ -196,6 +209,11 @@
         const simSpeedInput = document.getElementById('simSpeed');
         const simSpeedVal = document.getElementById('simSpeedVal');
         const resetBtn = document.getElementById('resetBtn');
+        const announcer = document.getElementById('announcer');
+
+        function announce(message) {
+            announcer.textContent = message;
+        }
 
         // State
         let road = new Array(NUM_CELLS).fill(null);
@@ -237,6 +255,7 @@
             // If the cell is within bounds and empty, add a car and redraw
             if (cellIndex >= 0 && cellIndex < NUM_CELLS && road[cellIndex] === null) {
                 road[cellIndex] = new Car(initSpeed);
+                announce(`Car added at cell ${cellIndex}`);
                 draw();
             }
         }
@@ -252,10 +271,14 @@
             if (e.key === 'ArrowLeft') {
                 e.preventDefault();
                 selectedCell = selectedCell <= 0 ? NUM_CELLS - 1 : selectedCell - 1;
+                const status = road[selectedCell] ? 'occupied' : 'empty';
+                announce(`Selected cell ${selectedCell}, ${status}`);
                 draw();
             } else if (e.key === 'ArrowRight') {
                 e.preventDefault();
                 selectedCell = selectedCell === NUM_CELLS - 1 || selectedCell === -1 ? 0 : selectedCell + 1;
+                const status = road[selectedCell] ? 'occupied' : 'empty';
+                announce(`Selected cell ${selectedCell}, ${status}`);
                 draw();
             } else if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
