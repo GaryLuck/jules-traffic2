@@ -7,3 +7,6 @@
 ## 2026-04-10 - Canvas Keyboard Accessibility
 **Learning:** While simple `<canvas>` interaction (like clicking) is easily achievable, achieving functional parity for keyboard-only or screen reader users requires dedicated state management to track focus inside the canvas and dedicated key listeners (e.g., arrow keys) to navigate internal elements.
 **Action:** When a canvas is interactive, always check if keyboard interactions (like Enter/Space) achieve the same fine-grained control as mouse clicks. If not, implement internal focus tracking (e.g., `selectedCell`), handle arrow keys for navigation, provide clear visual feedback for the selected area, and explicitly update `aria-label` instructions to guide users on how to use these controls.
+## 2024-05-26 - aria-live Announcer for Dynamic Canvas States
+**Learning:** For dynamic `<canvas>` interactions where internal state changes (like moving a selection cursor or adding a car), screen readers have no built-in way to know what happened unless the changes are explicitly announced.
+**Action:** Use a visually hidden `aria-live="polite"` announcer `<div>` and update its `textContent` programmatically via JavaScript (using a short timeout to ensure the change is detected). Call an `announce()` function on keydown and click events to make internal canvas state changes accessible.
