@@ -124,6 +124,18 @@
             color: #bdc3c7;
             text-align: center;
         }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
     </style>
 </head>
 <body>
@@ -161,6 +173,7 @@
         <div class="canvas-container">
             <canvas id="roadCanvas" width="900" height="100" role="img" aria-label="Live traffic simulation showing cars moving left to right. Use Left/Right arrow keys to select a cell and press Enter/Space to manually add a car." tabindex="0"></canvas>
             <div class="canvas-hint">💡 Use Left/Right arrow keys and Enter/Space to add a car</div>
+            <div id="announcer" aria-live="polite" class="sr-only"></div>
         </div>
 
         <div class="info">
@@ -188,6 +201,7 @@
 
         // UI Elements
         const entryRateInput = document.getElementById('entryRate');
+        const announcer = document.getElementById('announcer');
         const entryRateVal = document.getElementById('entryRateVal');
         const initialSpeedInput = document.getElementById('initialSpeed');
         const initialSpeedVal = document.getElementById('initialSpeedVal');
@@ -230,14 +244,26 @@
 
         resetBtn.addEventListener('click', initSimulation);
 
+        function announce(message) {
+            announcer.textContent = '';
+            setTimeout(() => {
+                announcer.textContent = message;
+            }, 50);
+        }
+
         function handleCanvasInteraction(x) {
             // Determine which cell was clicked based on CELL_WIDTH
             const cellIndex = Math.floor(x / CELL_WIDTH);
 
             // If the cell is within bounds and empty, add a car and redraw
-            if (cellIndex >= 0 && cellIndex < NUM_CELLS && road[cellIndex] === null) {
-                road[cellIndex] = new Car(initSpeed);
-                draw();
+            if (cellIndex >= 0 && cellIndex < NUM_CELLS) {
+                if (road[cellIndex] === null) {
+                    road[cellIndex] = new Car(initSpeed);
+                    draw();
+                    announce(`Car added at cell ${cellIndex + 1}.`);
+                } else {
+                    announce(`Cell ${cellIndex + 1} is already occupied.`);
+                }
             }
         }
 
@@ -253,10 +279,12 @@
                 e.preventDefault();
                 selectedCell = selectedCell <= 0 ? NUM_CELLS - 1 : selectedCell - 1;
                 draw();
+                announce(`Selected cell ${selectedCell + 1}, ${road[selectedCell] === null ? 'empty' : 'occupied'}.`);
             } else if (e.key === 'ArrowRight') {
                 e.preventDefault();
                 selectedCell = selectedCell === NUM_CELLS - 1 || selectedCell === -1 ? 0 : selectedCell + 1;
                 draw();
+                announce(`Selected cell ${selectedCell + 1}, ${road[selectedCell] === null ? 'empty' : 'occupied'}.`);
             } else if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
                 // For keyboard interaction, add car to the selected cell, or middle if none selected
