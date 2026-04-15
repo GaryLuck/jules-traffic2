@@ -117,6 +117,18 @@
             font-style: italic;
         }
 
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
         .info {
             margin-top: 20px;
             font-size: 14px;
@@ -161,6 +173,7 @@
         <div class="canvas-container">
             <canvas id="roadCanvas" width="900" height="100" role="img" aria-label="Live traffic simulation showing cars moving left to right. Use Left/Right arrow keys to select a cell and press Enter/Space to manually add a car." tabindex="0"></canvas>
             <div class="canvas-hint">💡 Use Left/Right arrow keys and Enter/Space to add a car</div>
+            <div id="announcer" aria-live="polite" class="sr-only"></div>
         </div>
 
         <div class="info">
@@ -189,6 +202,13 @@
         // UI Elements
         const entryRateInput = document.getElementById('entryRate');
         const entryRateVal = document.getElementById('entryRateVal');
+        const announcer = document.getElementById('announcer');
+
+        function announce(message) {
+            if (announcer) {
+                announcer.textContent = message;
+            }
+        }
         const initialSpeedInput = document.getElementById('initialSpeed');
         const initialSpeedVal = document.getElementById('initialSpeedVal');
         const pBrakeInput = document.getElementById('pBrake');
@@ -238,6 +258,7 @@
             if (cellIndex >= 0 && cellIndex < NUM_CELLS && road[cellIndex] === null) {
                 road[cellIndex] = new Car(initSpeed);
                 draw();
+                announce(`Car added at cell ${cellIndex}`);
             }
         }
 
@@ -253,10 +274,12 @@
                 e.preventDefault();
                 selectedCell = selectedCell <= 0 ? NUM_CELLS - 1 : selectedCell - 1;
                 draw();
+                announce(`Cell ${selectedCell} selected`);
             } else if (e.key === 'ArrowRight') {
                 e.preventDefault();
                 selectedCell = selectedCell === NUM_CELLS - 1 || selectedCell === -1 ? 0 : selectedCell + 1;
                 draw();
+                announce(`Cell ${selectedCell} selected`);
             } else if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
                 // For keyboard interaction, add car to the selected cell, or middle if none selected
