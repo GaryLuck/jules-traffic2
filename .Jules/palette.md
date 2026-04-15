@@ -7,3 +7,6 @@
 ## 2026-04-10 - Canvas Keyboard Accessibility
 **Learning:** While simple `<canvas>` interaction (like clicking) is easily achievable, achieving functional parity for keyboard-only or screen reader users requires dedicated state management to track focus inside the canvas and dedicated key listeners (e.g., arrow keys) to navigate internal elements.
 **Action:** When a canvas is interactive, always check if keyboard interactions (like Enter/Space) achieve the same fine-grained control as mouse clicks. If not, implement internal focus tracking (e.g., `selectedCell`), handle arrow keys for navigation, provide clear visual feedback for the selected area, and explicitly update `aria-label` instructions to guide users on how to use these controls.
+## 2024-05-26 - Broadcasting Canvas State to Screen Readers
+**Learning:** Screen readers cannot automatically perceive internal state changes or visual updates within a `<canvas>` element (e.g., cell selection or adding items), making these interactions invisible to visually impaired users.
+**Action:** Use an invisible `aria-live` announcer div to programmatically broadcast significant canvas interactions and state changes (like "Cell 5 selected" or "Car added") so that screen reader users receive auditory feedback for their actions.
