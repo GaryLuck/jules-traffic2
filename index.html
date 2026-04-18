@@ -160,6 +160,7 @@
 
         <div class="canvas-container">
             <canvas id="roadCanvas" width="900" height="100" role="img" aria-label="Live traffic simulation showing cars moving left to right. Use Left/Right arrow keys to select a cell and press Enter/Space to manually add a car." tabindex="0"></canvas>
+            <div id="canvas-announcer" aria-live="polite" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;"></div>
             <div class="canvas-hint">💡 Use Left/Right arrow keys and Enter/Space to add a car</div>
         </div>
 
@@ -230,14 +231,28 @@
 
         resetBtn.addEventListener('click', initSimulation);
 
+        function announce(message) {
+            const announcer = document.getElementById('canvas-announcer');
+            if (announcer) {
+                // Clear and re-set to ensure screen readers read repeated messages
+                announcer.textContent = '';
+                setTimeout(() => { announcer.textContent = message; }, 50);
+            }
+        }
+
         function handleCanvasInteraction(x) {
             // Determine which cell was clicked based on CELL_WIDTH
             const cellIndex = Math.floor(x / CELL_WIDTH);
 
             // If the cell is within bounds and empty, add a car and redraw
-            if (cellIndex >= 0 && cellIndex < NUM_CELLS && road[cellIndex] === null) {
-                road[cellIndex] = new Car(initSpeed);
-                draw();
+            if (cellIndex >= 0 && cellIndex < NUM_CELLS) {
+                if (road[cellIndex] === null) {
+                    road[cellIndex] = new Car(initSpeed);
+                    draw();
+                    announce(`Added car to cell ${cellIndex + 1}.`);
+                } else {
+                    announce(`Cell ${cellIndex + 1} is already occupied.`);
+                }
             }
         }
 
@@ -253,10 +268,14 @@
                 e.preventDefault();
                 selectedCell = selectedCell <= 0 ? NUM_CELLS - 1 : selectedCell - 1;
                 draw();
+                const status = road[selectedCell] === null ? 'empty' : 'occupied';
+                announce(`Selected cell ${selectedCell + 1}, ${status}.`);
             } else if (e.key === 'ArrowRight') {
                 e.preventDefault();
                 selectedCell = selectedCell === NUM_CELLS - 1 || selectedCell === -1 ? 0 : selectedCell + 1;
                 draw();
+                const status = road[selectedCell] === null ? 'empty' : 'occupied';
+                announce(`Selected cell ${selectedCell + 1}, ${status}.`);
             } else if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
                 // For keyboard interaction, add car to the selected cell, or middle if none selected
